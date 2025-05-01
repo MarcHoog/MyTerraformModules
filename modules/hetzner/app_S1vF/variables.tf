@@ -32,32 +32,3 @@ variable "volume_size" {
   description = "Size of the volume in GB"
   type        = number
 }
-
-variable "firewall_name" {
-  description = "Name for the firewall"
-  type        = string
-}
-
-variable "firewall_description" {
-  description = "Description for the firewall"
-  type        = string
-  default     = "Firewall for server and storage module"
-}
-
-variable "firewall_in_protocol" {
-  description = "Protocol for the inbound firewall rule"
-  type        = string
-  default     = "tcp"
-}
-
-variable "firewall_in_port" {
-  description = "Port for the inbound firewall rule (e.g., 80 or 443)"
-  type        = string
-  default     = "80"
-}
-
-variable "firewall_in_source_ips" {
-  description = "List of source CIDR blocks for the inbound firewall rule"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
-}
