@@ -1,6 +1,11 @@
+resource "random_pet" "name" {
+  length    = 2    # e.g. “fluffy-sheep”
+  separator = "-"  
+}
+
 # Create a Hetzner Cloud server
 resource "hcloud_server" "server" {
-  name        = var.server_name
+  name        = var.server_name != "" ? var.server_name : random_pet.name.id           
   image       = var.image
   server_type = var.server_type
   location    = var.location
