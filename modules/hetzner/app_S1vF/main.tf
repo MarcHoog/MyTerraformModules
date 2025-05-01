@@ -19,29 +19,3 @@ resource "hcloud_volume_attachment" "attachment" {
   server_id = hcloud_server.server.id
   volume_id = hcloud_volume.storage.id
 }
-
-# Create a firewall
-resource "hcloud_firewall" "firewall" {
-  name        = var.firewall_name
-  description = var.firewall_description
-
-  rule {
-    direction     = "in"
-    protocol      = var.firewall_in_protocol
-    port          = var.firewall_in_port
-    source_ips    = var.firewall_in_source_ips
-  }
-
-  rule {
-    direction       = "out"
-    protocol        = "tcp"
-    port            = "0-65535"
-    destination_ips = ["0.0.0.0/0"]
-  }
-}
-
-# Attach the server to the firewall
-resource "hcloud_firewall_assignment" "assignment" {
-  firewall_id = hcloud_firewall.firewall.id
-  server_ids  = [hcloud_server.server.id]
-}
