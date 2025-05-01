@@ -40,3 +40,16 @@ variable "volume_size" {
   type        = number
   default     = 0
 }
+
+variable "ipv4_enabled" {
+  description = "Enable IPv4 for the server"
+  type        = bool
+  default     = false
+}
+
+variable "ipv6_enabled" {
+  description = "Enable IPv6 for the server"
+  type        = bool
+  default     = true               
+  
+}

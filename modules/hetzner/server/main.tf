@@ -10,6 +10,10 @@ resource "hcloud_server" "server" {
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
+  public_net {
+    ipv4_enabled = var.ipv4_enabled 
+    ipv6_enabled = var.ipv6_enabled
+  }    
 }
 
 # Create volume only if volume_name is set
