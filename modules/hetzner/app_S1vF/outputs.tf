@@ -7,8 +7,3 @@ output "volume_id" {
   description = "The ID of the created volume"
   value       = hcloud_volume.storage.id
 }
-
-output "firewall_id" {
-  description = "The ID of the created firewall"
-  value       = hcloud_firewall.firewall.id
-}
