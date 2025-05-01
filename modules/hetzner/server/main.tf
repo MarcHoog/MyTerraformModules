@@ -7,15 +7,17 @@ resource "hcloud_server" "server" {
   ssh_keys    = var.ssh_keys
 }
 
-# Create a block storage volume (as a stand-in for object storage)
+# Create volume only if volume_name is set
 resource "hcloud_volume" "storage" {
+  count    = var.volume_name != "" ? 1 : 0
   name     = var.volume_name
-  size     = var.volume_size  # in GB
+  size     = var.volume_size
   location = var.location
 }
 
-# Attach the volume to the server
+# Attach the volume only if it exists
 resource "hcloud_volume_attachment" "attachment" {
+  count     = var.volume_name != "" ? 1 : 0
   server_id = hcloud_server.server.id
-  volume_id = hcloud_volume.storage.id
+  volume_id = hcloud_volume.storage[0].id
 }

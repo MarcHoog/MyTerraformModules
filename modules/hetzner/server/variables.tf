@@ -30,9 +30,11 @@ variable "ssh_keys" {
 variable "volume_name" {
   description = "Name of the volume for storage"
   type        = string
+  default     = ""
 }
 
 variable "volume_size" {
   description = "Size of the volume in GB"
   type        = number
+  default     = 0
 }
