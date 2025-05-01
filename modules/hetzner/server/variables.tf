@@ -21,6 +21,10 @@ variable "server_type" {
 variable "location" {
   description = "Hetzner location (e.g., nbg1, fsn1)"
   type        = string
+  validation {
+    condition     = contains(["nbg1", "fsn1"], var.location)
+    error_message = "The location must be one of: nbg1, fsn1"
+  }             
 }
 
 variable "ssh_keys" {
@@ -41,6 +45,7 @@ variable "volume_size" {
   default     = 0
 }
 
+
 variable "ipv4_enabled" {
   description = "Enable IPv4 for the server"
   type        = bool
@@ -50,6 +55,6 @@ variable "ipv4_enabled" {
 variable "ipv6_enabled" {
   description = "Enable IPv6 for the server"
   type        = bool
-  default     = true               
+  default     = false               
   
 }
