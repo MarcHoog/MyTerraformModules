@@ -25,6 +25,7 @@ variable "location" {
 variable "ssh_keys" {
   description = "List of SSH key names (as registered in Hetzner) to add to the server"
   type        = list(string)
+  default    = []
 }
 
 variable "volume_name" {
