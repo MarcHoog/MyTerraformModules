@@ -5,5 +5,5 @@ output "server_id" {
 
 output "volume_id" {
   description = "The ID of the created volume"
-  value       = hcloud_volume.storage[0].id
+  value       = var.volume_name != "" ? hcloud_volume.storage[0].id : null
 }
