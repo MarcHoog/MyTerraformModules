@@ -53,14 +53,29 @@ variable "volume_size" {
 
 
 variable "ipv4_enabled" {
-  description = "Enable IPv4 for the server"
+  description = "Enable IPv4 for the server(s)"
   type        = bool
   default     = false
 }
 
 variable "ipv6_enabled" {
-  description = "Enable IPv6 for the server"
+  description = "Enable IPv6 for the server(s)"
   type        = bool
   default     = false               
   
 }
+
+
+#variable "private_network" {
+#  description = "Enable private network for the server(s)"
+#  type        = bool
+#  default     = false                     
+#  
+#}
+
+
+#variable "network_id" {
+#  description = "Hetzner network ID for private networking"
+#  type        = string
+#  default     = ""
+#}                 
