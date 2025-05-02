@@ -5,7 +5,7 @@ debug: True
 package_update: true
 package_upgrade: true
 
-%{ if operator_user ~}
+%{ if has_operator_user ~}
 users:
   - name: "${operator_user}"
     ssh_authorized_keys:
