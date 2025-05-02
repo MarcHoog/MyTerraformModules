@@ -4,6 +4,18 @@ variable "server_name" {
   default     = ""
 }
 
+variable "nodes" {
+  description = "Number of nodes to create"
+  type        = number
+  default     = 1             
+
+  validation {
+    condition     = var.nodes > 0
+    error_message = "The number of nodes must be greater than 0"
+  }                 
+  
+}
+
 variable "image" {
   description = "The image slug to use for the server (e.g., ubuntu-22.04)"
   type        = string
@@ -31,12 +43,6 @@ variable "ssh_keys" {
   description = "List of SSH key names (as registered in Hetzner) to add to the server"
   type        = list(string)
   default    = []
-}
-
-variable "volume_name" {
-  description = "Name of the volume for storage"
-  type        = string
-  default     = ""
 }
 
 variable "volume_size" {
