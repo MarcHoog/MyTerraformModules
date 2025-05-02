@@ -7,9 +7,9 @@ package_upgrade: true
 
 %{ if var.operator_user ~}
 users:
-  - name: "${var.operator_user}"
+  - name: "${operator_user}"
     ssh_authorized_keys:
-    %{ for key in var.ssh_keys ~} 
+    %{ for key in ssh_keys ~} 
       - ${key}
     %{ endfor ~}
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
@@ -18,4 +18,4 @@ users:
 %{ endif ~}
 
 runcmd:
-  - sed -i '$ a\AllowUsers ${var.operator_user}' /etc/ssh/sshd_config
+  - sed -i '$ a\AllowUsers ${operator_user}' /etc/ssh/sshd_config
