@@ -5,17 +5,11 @@ debug: True
 package_update: true
 package_upgrade: true
 
-%{ if has_operator_user ~}
 users:
-  - name: "${operator_user}"
-    ssh_authorized_keys:
-    %{ for key in ssh_keys ~} 
-      - ${key}
-    %{ endfor ~}
+  - name: "bubble"
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
     groups: [users, admin]
     shell: /bin/bash
-%{ endif ~}
 
 runcmd:
-  - sed -i '$ a\AllowUsers ${operator_user}' /etc/ssh/sshd_config
+  - sed -i '$ a\AllowUsers bubble' /etc/ssh/sshd_config
