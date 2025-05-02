@@ -8,10 +8,9 @@ package_upgrade: true
 users:
   - name: "bubble"
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-%{ for key in ssh_keys ~}
     ssh-authorized-keys:
-      - ${key}  
-
+%{ for key in ssh_keys ~}
+      - ${key.public_key}
 %{ endfor ~}
     groups: [users, admin]
     shell: /bin/bash
