@@ -9,7 +9,7 @@ package_upgrade: true
 users:
   - name: "${var.operator_user}"
     ssh_authorized_keys:
-    %{ for key in ssh_keys ~} 
+    %{ for key in var.ssh_keys ~} 
       - ${key}
     %{ endfor ~}
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
