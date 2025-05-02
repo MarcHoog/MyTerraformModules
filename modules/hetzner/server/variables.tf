@@ -65,17 +65,8 @@ variable "ipv6_enabled" {
   
 }
 
-
-#variable "private_network" {
-#  description = "Enable private network for the server(s)"
-#  type        = bool
-#  default     = false                     
-#  
-#}
-
-
-#variable "network_id" {
-#  description = "Hetzner network ID for private networking"
-#  type        = string
-#  default     = ""
-#}                 
+variable "ssh_key_path" {
+  description = "Path to the SSH key file"
+  type        = string
+  default     = "~/.ssh/id_rsa.pub"                         
+}
