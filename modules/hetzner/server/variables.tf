@@ -64,15 +64,3 @@ variable "ipv6_enabled" {
   default     = false               
   
 }
-
-variable "ssh_key_path" {
-  description = "Path to the SSH key file"
-  type        = string
-  default     = "~/.ssh/id_rsa.pub"                         
-}
-
-variable "operator_user" {
-  description = "The operator user to create on the server"
-  type        = string
-  default     = ""                                  
-}

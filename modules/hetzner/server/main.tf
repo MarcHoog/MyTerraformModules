@@ -13,7 +13,7 @@ resource "hcloud_server" "server" {
   server_type = var.server_type
   location    = var.location
   user_data   = data.cloudinit_config.config.rendered       
-  ssh_keys    = local.ssh_keys
+  ssh_keys    = var.ssh_keys
 
   public_net {
     ipv4_enabled = var.ipv4_enabled
@@ -36,20 +36,3 @@ resource "hcloud_volume_attachment" "attachment" {
   volume_id = hcloud_volume.storage[count.index].id
 }
 
-resource "hcloud_ssh_key" "ssh_key" {
-  count = var.ssh_key_path != "" ? 1 : 0
-  name  = "terraform-ssh-key-${random_pet.name[count.index].id}"          
-  public_key = file(var.ssh_key_path)           
-}
-
-data "cloudinit_config" "config" {
-  gzip = true
-  base64_encode = true
-  part {
-    content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/template/cloud-init.yaml.tftpl", {
-      operator_user = "bubble"
-      ssh_key      = hcloud_ssh_key.ssh_key[0].public_key
-      })
-    }
-}
