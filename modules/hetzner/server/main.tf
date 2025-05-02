@@ -47,7 +47,7 @@ data "cloudinit_config" "config" {
   base64_encode = true
   part {
     content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/template/cloud-init.yaml.tpl", {
+    content      = templatefile("${path.module}/template/cloud-init.yaml.tftpl", {
       has_operator_user = true
       operator_user = "bubble"
       ssh_keys      = local.ssh_keys
