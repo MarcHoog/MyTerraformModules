@@ -49,7 +49,7 @@ data "cloudinit_config" "config" {
     content_type = "text/cloud-config"
     content      = templatefile("${path.module}/template/cloud-init.yaml.tpl", {
       operator_user = "bubble"
-      ssh_keys      = all_ssh_keys
+      ssh_keys      = local.all_ssh_keys
       })
     }
 }
