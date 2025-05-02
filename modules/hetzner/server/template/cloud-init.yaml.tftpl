@@ -9,9 +9,7 @@ users:
   - name: "bubble"
     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
     ssh-authorized-keys:
-%{ for key in ssh_keys ~}
-      - ${key}
-%{ endfor ~}
+      - ${ssh_key}
     groups: [users, admin]
     shell: /bin/bash
 

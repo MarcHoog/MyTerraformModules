@@ -70,3 +70,9 @@ variable "ssh_key_path" {
   type        = string
   default     = "~/.ssh/id_rsa.pub"                         
 }
+
+variable "operator_user" {
+  description = "The operator user to create on the server"
+  type        = string
+  default     = ""                                  
+}

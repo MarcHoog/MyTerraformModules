@@ -48,9 +48,8 @@ data "cloudinit_config" "config" {
   part {
     content_type = "text/cloud-config"
     content      = templatefile("${path.module}/template/cloud-init.yaml.tftpl", {
-      has_operator_user = true
       operator_user = "bubble"
-      ssh_keys      = local.ssh_keys
+      ssh_key      = hcloud_ssh_key.ssh_key[0].public_key
       })
     }
 }
