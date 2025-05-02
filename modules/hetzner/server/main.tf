@@ -13,7 +13,7 @@ resource "hcloud_server" "server" {
   server_type = var.server_type
   location    = var.location
   user_data   = data.cloudinit_config.config.rendered       
-  ssh_keys    = local.all_ssh_keys  
+  ssh_keys    = local.ssh_keys
 
   public_net {
     ipv4_enabled = var.ipv4_enabled
@@ -50,7 +50,7 @@ data "cloudinit_config" "config" {
     content      = templatefile("${path.module}/template/cloud-init.yaml.tpl", {
       has_operator_user = true
       operator_user = "bubble"
-      ssh_keys      = local.all_ssh_keys
+      ssh_keys      = local.ssh_keys
       })
     }
 }
