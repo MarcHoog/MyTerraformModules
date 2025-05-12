@@ -2,7 +2,7 @@ variable "server_name" {
   description = "Name of the Hetzner server"
   type        = string
   default     = ""
-}
+  }
 
 variable "nodes" {
   description = "Number of nodes to create"
