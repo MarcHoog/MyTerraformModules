@@ -1,8 +1,19 @@
-
-# Checks everything from environment vars to tools
-resource "null_resource" "check_requirements" {
+# Hehe if this works it's kinda genius not gonna lie
+resource "null_resource" "get_snapshots" {
   provisioner "local-exec" {
-    command = "${path.module}/scripts/setup.sh"
+    command = <<EOT
+      mkdir -p tmp
+      echo "[" > tmp/snapshots.json
+      for name in $(terraform output -raw random_names); do
+        id=$(hcloud image list --selector type=snapshot --output json | jq -r ".[] | select(.description == \\"vm-snapshot-$name\\") | .id")
+        echo "  \"$id\"," >> tmp/snapshots.json
+      done
+      echo "]" >> tmp/snapshots.json
+    EOT
+  }
+
+  triggers = {
+    always_run = timestamp()
   }
 }
 
@@ -12,16 +23,15 @@ resource "random_pet" "name" {
   separator = "-"
 }
 
-data "hcloud_image" "snapshot" {
-  count = var.nodes
-  name = "vm-snapshot-${random_pet.name[count.index].id}"
-
+data "local_file" "snapshot_ids" {
+  depends_on = [null_resource.get_snapshots]
+  filename   = "${path.module}/tmp/snapshots.json"
 }
 
 resource "hcloud_server" "server" {
   count       = var.nodes
   name        = random_pet.name[count.index].id
-  image       = try(data.hcloud_image.snapshot[count.index].id, var.image)
+  image       = local.snapshot_ids[count.index] != "" ? local.snapshot_ids[count.index] : var.image
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
