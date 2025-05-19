@@ -68,7 +68,3 @@ resource "null_resource" "snapshot_before_destroy" {
 
   depends_on = [hcloud_server.server]
 }
-
-
-  depends_on = [hcloud_server.server]
-}
