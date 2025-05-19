@@ -1,31 +1,18 @@
-# Hehe if this works it's kinda genius not gonna lie
-resource "random_pet" "name" {
-  count     = var.nodes
-  length    = 2    # e.g. “fluffy-sheep”
-  separator = "-"
-
-  keepers = {
-    # change this value only when you really want new names
-    module_version = "v1.0.0"
-  }
-}
-
 # TODO This still doesn't go very lekker tbh
 resource "null_resource" "get_snapshots" {
   triggers = {
-    node_names = join(",", random_pet.name[*].id)
+    node_names = join(",", var.server_names[*])
   }
 
   provisioner "local-exec" {
     command = <<-EOT
       mkdir -p "${path.module}/tmp"
       python3 "${path.module}/scripts/get_snapshots.py" \
-        --names "${join(" ", random_pet.name[*].id)}" \
+        --names "${join(" ", var.server_names[*])}" \
         --output "${path.module}/tmp/snapshots.json"
     EOT
   }
 
-  depends_on = [random_pet.name]
 }
 
 
@@ -37,7 +24,7 @@ data "local_file" "snapshot_ids" {
 
 resource "hcloud_server" "server" {
   count       = var.nodes
-  name        = random_pet.name[count.index].id
+  name        = var.server_names[count.index]
   image       = local.snapshot_ids[count.index] != "" ? local.snapshot_ids[count.index] : var.image
   server_type = var.server_type
   location    = var.location
@@ -52,7 +39,7 @@ resource "hcloud_server" "server" {
 # Create a volume per node only if volume_size > 0
 resource "hcloud_volume" "storage" {
   count    = var.volume_size > 0 ? var.nodes : 0
-  name     = "${random_pet.name[count.index].id}-vl"     
+  name     = "${var.server_names[count.index]}-vl"
   size     = var.volume_size
   location = var.location
 }

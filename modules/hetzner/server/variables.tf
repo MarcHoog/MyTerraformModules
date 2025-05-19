@@ -1,8 +1,14 @@
-variable "server_name" {
+variable "server_names" {
   description = "Name of the Hetzner server"
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = length(var.server_names) != length(var.nodes)
+    error_message = "The names must be equal the server nodes"
   }
+
+}
 
 variable "nodes" {
   description = "Number of nodes to create"
