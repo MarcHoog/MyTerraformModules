@@ -4,8 +4,8 @@ variable "server_names" {
   default     = []
 
   validation {
-    condition = length(var.server_names) != length(var.nodes)
-    error_message = "The names must be equal the server nodes"
+    condition = length(var.server_names) != var.nodes
+    error_message = "server_names must contain exactly entries."
   }
 
 }
