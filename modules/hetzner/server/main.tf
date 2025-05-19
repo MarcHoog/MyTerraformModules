@@ -69,8 +69,8 @@ resource "null_resource" "snapshot_before_destroy" {
   provisioner "local-exec" {
     when    = destroy
     command = <<EOT
-      hcloud server create-image "$SERVER_ID" \
-        --description "vm-snapshot-$SERVER_NAME" \
+      hcloud server create-image ${SERVER_ID} \
+        --description "vm-snapshot-${server_name}" \
         --type snapshot
     EOT
   }
