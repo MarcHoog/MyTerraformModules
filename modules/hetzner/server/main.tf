@@ -7,24 +7,17 @@ resource "random_pet" "name" {
 
 # TODO This still doesn't go very lekker tbh
 resource "null_resource" "get_snapshots" {
-  provisioner "local-exec" {
-    command = <<EOT
-      mkdir -p ${path.module}/tmp
-      echo "[" > ${path.module}/tmp/snapshots.json
-      for name in ${join(" ", random_pet.name[*].id)}; do
-        id=$(hcloud image list --selector type=snapshot --output json | jq -r '.[] | select(.description == "vm-snapshot-'$name'") | .id')
-        if [[ -n "$id" ]]; then
-          echo "\"$id\"," >> ${path.module}/tmp/snapshots.json
-        else
-          echo "\"\"," >> ${path.module}/tmp/snapshots.json
-        fi
-      done
-      echo "]" >> ${path.module}/tmp/snapshots.json
-    EOT
+  triggers = {
+    node_names = join(",", random_pet.name[*].id)
   }
 
-  triggers = {
-    always_run = timestamp()
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p "${path.module}/tmp"
+      python3 "${path.module}/scripts/get_snapshots.py" \
+        --names "${join(" ", random_pet.name[*].id)}" \
+        --output "${path.module}/tmp/snapshots.json"
+    EOT
   }
 
   depends_on = [random_pet.name]
