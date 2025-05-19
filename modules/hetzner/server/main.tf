@@ -5,17 +5,16 @@ resource "random_pet" "name" {
   separator = "-"
 }
 
-
 resource "null_resource" "get_snapshots" {
   provisioner "local-exec" {
     command = <<EOT
-      mkdir -p tmp
-      echo "[" > tmp/snapshots.json
+      mkdir -p ${path.module}/tmp
+      echo "[" > ${path.module}/tmp/snapshots.json
       for name in ${join(" ", random_pet.name[*].id)}; do
         id=$(hcloud image list --selector type=snapshot --output json | jq -r '.[] | select(.description == "vm-snapshot-'$name'") | .id')
-        echo "  \\"$id\\"," >> tmp/snapshots.json
+        echo "  \\"$id\\"," >> ${path.module}/tmp/snapshots.json
       done
-      echo "]" >> tmp/snapshots.json
+      echo "]" >> ${path.module}/tmp/snapshots.json
     EOT
   }
 
