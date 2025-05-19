@@ -3,6 +3,11 @@ resource "random_pet" "name" {
   count     = var.nodes
   length    = 2    # e.g. “fluffy-sheep”
   separator = "-"
+
+  keepers = {
+    # change this value only when you really want new names
+    module_version = "v1.0.0"
+  }
 }
 
 # TODO This still doesn't go very lekker tbh
