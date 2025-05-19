@@ -13,7 +13,11 @@ resource "null_resource" "get_snapshots" {
       echo "[" > ${path.module}/tmp/snapshots.json
       for name in ${join(" ", random_pet.name[*].id)}; do
         id=$(hcloud image list --selector type=snapshot --output json | jq -r '.[] | select(.description == "vm-snapshot-'$name'") | .id')
-        echo "  \"$id\"," >> ${path.module}/tmp/snapshots.json
+        if [[ -n "$id" ]]; then
+          echo "\"$id\"," >> ${path.module}/tmp/snapshots.json
+        else
+          echo "\"\"," >> ${path.module}/tmp/snapshots.json
+        fi
       done
       echo "]" >> ${path.module}/tmp/snapshots.json
     EOT
