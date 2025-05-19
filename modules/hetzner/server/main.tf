@@ -23,8 +23,8 @@ data "hcloud_image" "snapshot" {
 
 resource "hcloud_server" "server" {
   count       = var.nodes
-  name        = random_pet.name[count.index].id            # fixed attribute path :contentReference[oaicite:0]{index=0}
-  image       = try(data.hcloud_image.snapshot.id, var.image),
+  name        = random_pet.name[count.index].id
+  image       = try(data.hcloud_image.snapshot.id, var.image)
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
@@ -38,7 +38,7 @@ resource "hcloud_server" "server" {
 # Create a volume per node only if volume_size > 0
 resource "hcloud_volume" "storage" {
   count    = var.volume_size != 0 ? var.nodes : 0
-  name     = "${random_pet.name[count.index].id}-vl"       # use interpolation :contentReference[oaicite:1]{index=1}
+  name     = "${random_pet.name[count.index].id}-vl"     
   size     = var.volume_size
   location = var.location
 }
@@ -56,8 +56,9 @@ resource "null_resource" "snapshot_before_destroy" {
   }
 
   provisioner "local-exec" {
-    when    = "destroy"
-    command = "hcloud server create-image ${hcloud_server.server[count.index].id} --description 'vm-snapshot-${hcloud_server.server.name}' --type snapshot"
+    count   = var.nodes
+    when    = destroy
+    command = "hcloud server create-image ${hcloud_server.server[count.index].id} --description 'vm-snapshot-${hcloud_server.server[count.index].name}' --type snapshot"
   }
 
   depends_on = [hcloud_server.server]
