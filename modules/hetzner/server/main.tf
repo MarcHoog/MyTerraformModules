@@ -16,9 +16,6 @@ data "hcloud_image" "snapshot" {
   count = var.nodes
   name = "vm-snapshot-${random_pet.name[count.index].id}"
 
-  lifecycle {
-    ignore_errors = true
-  }
 }
 
 resource "hcloud_server" "server" {
