@@ -1,18 +1,32 @@
-# Generate a unique pet name per node
+
+# Checks everything from environment vars to tools
+resource "null_resource" "check_requirements" {
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/setup.sh"
+  }
+}
+
 resource "random_pet" "name" {
   count     = var.nodes
   length    = 2    # e.g. “fluffy-sheep”
   separator = "-"
 }
 
-# Create a Hetzner Cloud server per node
+data "hcloud_image" "snapshot" {
+  count = var.nodes
+  name = "vm-snapshot-${random_pet.name[count.index].id}"
+
+  lifecycle {
+    ignore_errors = true
+  }
+}
+
 resource "hcloud_server" "server" {
   count       = var.nodes
   name        = random_pet.name[count.index].id            # fixed attribute path :contentReference[oaicite:0]{index=0}
-  image       = var.image
+  image       = try(data.hcloud_image.snapshot.id, var.image),
   server_type = var.server_type
   location    = var.location
-  user_data   = data.cloudinit_config.config.rendered       
   ssh_keys    = var.ssh_keys
 
   public_net {
@@ -29,10 +43,22 @@ resource "hcloud_volume" "storage" {
   location = var.location
 }
 
-# Attach the volume to its server
 resource "hcloud_volume_attachment" "attachment" {
   count     = var.volume_size != 0 ? var.nodes : 0
-  server_id = hcloud_server.server[count.index].id         # server ID is correct here :contentReference[oaicite:2]{index=2}
+  server_id = hcloud_server.server[count.index].id
   volume_id = hcloud_volume.storage[count.index].id
 }
 
+resource "null_resource" "snapshot_before_destroy" {
+  count = var.nodes
+  triggers = {
+    server_id = hcloud_server.server[count.index].id
+  }
+
+  provisioner "local-exec" {
+    when    = "destroy"
+    command = "hcloud server create-image ${hcloud_server.server[count.index].id} --description 'vm-snapshot-${hcloud_server.server.name}' --type snapshot"
+  }
+
+  depends_on = [hcloud_server.server[count.index]]
+}
