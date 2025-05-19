@@ -60,5 +60,5 @@ resource "null_resource" "snapshot_before_destroy" {
     command = "hcloud server create-image ${hcloud_server.server[count.index].id} --description 'vm-snapshot-${hcloud_server.server.name}' --type snapshot"
   }
 
-  depends_on = [hcloud_server.server[count.index]]
+  depends_on = [hcloud_server.server]
 }
