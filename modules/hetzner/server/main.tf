@@ -12,8 +12,8 @@ resource "null_resource" "get_snapshots" {
       mkdir -p tmp
       echo "[" > tmp/snapshots.json
       for name in ${join(" ", random_pet.name[*].id)}; do
-        id=$(hcloud image list --selector type=snapshot --output json | jq -r ".[] | select(.description == \\"vm-snapshot-$name\\") | .id")
-        echo "  \"$id\"," >> tmp/snapshots.json
+        id=$(hcloud image list --selector type=snapshot --output json | jq -r '.[] | select(.description == "vm-snapshot-'$name'") | .id')
+        echo "  \\"$id\\"," >> tmp/snapshots.json
       done
       echo "]" >> tmp/snapshots.json
     EOT
@@ -22,7 +22,10 @@ resource "null_resource" "get_snapshots" {
   triggers = {
     always_run = timestamp()
   }
+
+  depends_on = [random_pet.name]
 }
+
 
 
 data "local_file" "snapshot_ids" {
