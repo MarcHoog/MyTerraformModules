@@ -1,10 +1,17 @@
 # Hehe if this works it's kinda genius not gonna lie
+resource "random_pet" "name" {
+  count     = var.nodes
+  length    = 2    # e.g. “fluffy-sheep”
+  separator = "-"
+}
+
+
 resource "null_resource" "get_snapshots" {
   provisioner "local-exec" {
     command = <<EOT
       mkdir -p tmp
       echo "[" > tmp/snapshots.json
-      for name in $(terraform output -raw random_names); do
+      for name in ${join(" ", random_pet.name[*].id)}; do
         id=$(hcloud image list --selector type=snapshot --output json | jq -r ".[] | select(.description == \\"vm-snapshot-$name\\") | .id")
         echo "  \"$id\"," >> tmp/snapshots.json
       done
@@ -17,11 +24,6 @@ resource "null_resource" "get_snapshots" {
   }
 }
 
-resource "random_pet" "name" {
-  count     = var.nodes
-  length    = 2    # e.g. “fluffy-sheep”
-  separator = "-"
-}
 
 data "local_file" "snapshot_ids" {
   depends_on = [null_resource.get_snapshots]
