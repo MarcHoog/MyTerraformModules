@@ -24,7 +24,7 @@ data "hcloud_image" "snapshot" {
 resource "hcloud_server" "server" {
   count       = var.nodes
   name        = random_pet.name[count.index].id
-  image       = try(data.hcloud_image.snapshot.id, var.image)
+  image       = try(data.hcloud_image.snapshot[count.index].id, var.image)
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
@@ -37,29 +37,38 @@ resource "hcloud_server" "server" {
 
 # Create a volume per node only if volume_size > 0
 resource "hcloud_volume" "storage" {
-  count    = var.volume_size != 0 ? var.nodes : 0
+  count    = var.volume_size > 0 ? var.nodes : 0
   name     = "${random_pet.name[count.index].id}-vl"     
   size     = var.volume_size
   location = var.location
 }
 
 resource "hcloud_volume_attachment" "attachment" {
-  count     = var.volume_size != 0 ? var.nodes : 0
+  count     = var.volume_size > 0 ? var.nodes : 0
   server_id = hcloud_server.server[count.index].id
   volume_id = hcloud_volume.storage[count.index].id
 }
 
 resource "null_resource" "snapshot_before_destroy" {
   count = var.nodes
+
   triggers = {
-    server_id = hcloud_server.server[count.index].id
+    server_id   = hcloud_server.server[count.index].id
+    server_name = hcloud_server.server[count.index].name
   }
 
   provisioner "local-exec" {
-    count   = var.nodes
     when    = destroy
-    command = "hcloud server create-image ${hcloud_server.server[count.index].id} --description 'vm-snapshot-${hcloud_server.server[count.index].name}' --type snapshot"
+    command = <<EOT
+      hcloud server create-image "$SERVER_ID" \
+        --description "vm-snapshot-$SERVER_NAME" \
+        --type snapshot
+    EOT
   }
+
+  depends_on = [hcloud_server.server]
+}
+
 
   depends_on = [hcloud_server.server]
 }
