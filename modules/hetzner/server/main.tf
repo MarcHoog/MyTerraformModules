@@ -1,7 +1,7 @@
 # TODO This still doesn't go very lekker tbh
 resource "null_resource" "get_snapshots" {
   triggers = {
-    node_names = join(",", var.server_names[*])
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
