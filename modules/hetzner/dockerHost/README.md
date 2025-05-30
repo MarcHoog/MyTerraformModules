@@ -1,1 +1,0 @@
-Remote docker host for development that can easily be created and destroyed
