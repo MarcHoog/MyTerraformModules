@@ -34,6 +34,13 @@ resource "hcloud_server" "server" {
     ipv4_enabled = var.ipv4_enabled
     ipv6_enabled = var.ipv6_enabled
   }
+
+  lifecycle {
+    ignore_changes = [
+      image,
+      labels,
+    ]
+  }
 }
 
 # Create a volume per node only if volume_size > 0
