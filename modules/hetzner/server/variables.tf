@@ -25,10 +25,6 @@ variable "nodes" {
 variable "image" {
   description = "The image slug to use for the server (e.g., ubuntu-22.04)"
   type        = string
-  validation {
-    condition     = contains(["ubuntu-22.04", "ubuntu-20.04", "ubuntu-24.04"], var.image)
-    error_message = "The image must be one of: ubuntu-22.04, ubuntu-20.04, ubuntu-24.04"
-  }
 }
 
 variable "server_type" {
