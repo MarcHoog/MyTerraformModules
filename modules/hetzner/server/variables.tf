@@ -56,3 +56,9 @@ variable "labels" {
   type = map
   default = {}
 }
+
+variable "create_snapshot" {
+  description = "To create a snapshot or not"  
+  type = bool
+  default = false
+}
