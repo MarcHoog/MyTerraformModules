@@ -1,4 +1,4 @@
 
 locals {
-  snapshot_id = file(data.local_file.snapshot_id.content)
+  snapshot_id = data.local_file.snapshot_id.content
 }
