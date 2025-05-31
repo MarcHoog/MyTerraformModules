@@ -16,7 +16,7 @@ resource "null_resource" "get_snapshot" {
 }
 
 data "local_file" "snapshot_id" {
-  depends_on = null_resource.get_snapshot
+  depends_on = [null_resource.get_snapshot]
   filename   = "${path.module}/tmp/${var.server_name}_snap.txt"
 }
 
