@@ -26,6 +26,7 @@ resource "hcloud_server" "server" {
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
+  labels      = var.labels
 
   public_net {
     ipv4_enabled = var.ipv4_enabled

@@ -49,3 +49,10 @@ variable "ipv6_enabled" {
   default     = false               
   
 }
+
+
+variable "labels" {
+  description = "Labels to attach to the server"
+  type = map
+  default = {}
+}
