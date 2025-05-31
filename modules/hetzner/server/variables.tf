@@ -1,25 +1,8 @@
-variable "server_names" {
+variable "server_name" {
   description = "Name of the Hetzner server"
-  type        = list(string)
-  default     = []
+  type        = string
+  default     = ""
 
-  validation {
-    condition = length(var.server_names) == var.nodes
-    error_message = "server_names must contain exactly entries."
-  }
-
-}
-
-variable "nodes" {
-  description = "Number of nodes to create"
-  type        = number
-  default     = 1             
-
-  validation {
-    condition     = var.nodes > 0
-    error_message = "The number of nodes must be greater than 0"
-  }                 
-  
 }
 
 variable "image" {

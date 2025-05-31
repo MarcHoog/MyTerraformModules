@@ -1,4 +1,4 @@
 
 locals {
-  snapshot_ids = jsondecode(data.local_file.snapshot_ids.content)
+  snapshot_id = file(data.local_file.snapshot_id.content)
 }

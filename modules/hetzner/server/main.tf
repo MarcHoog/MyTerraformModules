@@ -1,5 +1,5 @@
 # TODO This still doesn't go very lekker tbh
-resource "null_resource" "get_snapshots" {
+resource "null_resource" "get_snapshot" {
   triggers = {
     always_run = timestamp()
   }
@@ -7,25 +7,22 @@ resource "null_resource" "get_snapshots" {
   provisioner "local-exec" {
     command = <<-EOT
       mkdir -p "${path.module}/tmp"
-      python3 "${path.module}/scripts/get_snapshots.py" \
-        --names "${join(" ", var.server_names[*])}" \
-        --output "${path.module}/tmp/snapshots.json"
+      python3 "${path.module}/scripts/get_snapshot.py" \
+        --name "${var.server_name}" \
+        --output "${path.module}/tmp/${var.server_name}_snap.txt"
     EOT
   }
 
 }
 
-
-
-data "local_file" "snapshot_ids" {
-  depends_on = [null_resource.get_snapshots]
-  filename   = "${path.module}/tmp/snapshots.json"
+data "local_file" "snapshot_id" {
+  depends_on = null_resource.get_snapshot
+  filename   = "${path.module}/tmp/${var.server_name}_snap.txt"
 }
 
 resource "hcloud_server" "server" {
-  count       = var.nodes
-  name        = var.server_names[count.index]
-  image       = local.snapshot_ids[count.index] != "" ? local.snapshot_ids[count.index] : var.image
+  name        = var.server_name
+  image       = local.snapshot_id != "" ? local.snapshot_id : var.image
   server_type = var.server_type
   location    = var.location
   ssh_keys    = var.ssh_keys
@@ -45,24 +42,22 @@ resource "hcloud_server" "server" {
 
 # Create a volume per node only if volume_size > 0
 resource "hcloud_volume" "storage" {
-  count    = var.volume_size > 0 ? var.nodes : 0
-  name     = "${var.server_names[count.index]}-vl"
+  count    = var.volume_size > 0 ? var.volume_size : 0
+  name     = "${var.server_name}-vl"
   size     = var.volume_size
   location = var.location
 }
 
 resource "hcloud_volume_attachment" "attachment" {
-  count     = var.volume_size > 0 ? var.nodes : 0
-  server_id = hcloud_server.server[count.index].id
-  volume_id = hcloud_volume.storage[count.index].id
+  count     = var.volume_size > 0 ? var.volume_size : 0
+  server_id = hcloud_server.server.id
+  volume_id = hcloud_volume.storage.id
 }
 
 resource "null_resource" "snapshot_before_destroy" {
-  count = var.nodes
-
   triggers = {
-    server_id   = hcloud_server.server[count.index].id
-    server_name = hcloud_server.server[count.index].name
+    server_id   = hcloud_server.server.id
+    server_name = hcloud_server.server.name
   }
 
   provisioner "local-exec" {
