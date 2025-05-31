@@ -41,18 +41,18 @@ resource "hcloud_server" "server" {
   }
 }
 
-# Create a volume per node only if volume_size > 0
+# Create a volume only if volume_size > 0
 resource "hcloud_volume" "storage" {
-  count    = var.volume_size > 0 ? var.volume_size : 0
+  count    = var.volume_size > 0 ? 1 : 0
   name     = "${var.server_name}-vl"
   size     = var.volume_size
   location = var.location
 }
 
 resource "hcloud_volume_attachment" "attachment" {
-  count     = var.volume_size > 0 ? var.volume_size : 0
+  count     = var.volume_size > 0 ? 1 : 0
   server_id = hcloud_server.server.id
-  volume_id = hcloud_volume.storage.id
+  volume_id = hcloud_volume.storage[0].id
 }
 
 resource "null_resource" "snapshot_before_destroy" {
