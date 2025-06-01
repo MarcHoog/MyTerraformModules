@@ -56,7 +56,7 @@ resource "hcloud_volume_attachment" "attachment" {
 }
 
 resource "null_resource" "snapshot_before_destroy" {
-  count =  var.create_snapshot ? 1: 0
+  count =  var.create_snapshot ? 1 : 0
   
   triggers = {
     server_id   = hcloud_server.server.id
